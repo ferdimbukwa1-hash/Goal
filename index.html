@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excellence | Belinda Amanya</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        :root {
+            --gold: #d4af37;
+            --deep-purple: #1a0033;
+            --accent-pink: #ff3366;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #fireworks-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .stage {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 700px;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 20px;
+        }
+
+        /* Image Slider/Carousel Styles */
+        .slider-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 30px;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out, transform 0.6s ease;
+            border-radius: 30px;
+            border: 2px solid var(--gold);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .slide.active { opacity: 1; }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s;
+        }
+
+        /* Hover Rotation Transform */
+        .slide:hover {
+            transform: rotateY(10deg) rotateX(5deg) scale(1.05);
+            box-shadow: 0 15px 45px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Message Styling */
+        .wish-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            background: linear-gradient(to right, #fff, #f9e29b, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        /* Video Styling */
+        .video-wrapper {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 25px;
+            background: #000;
+        }
+
+        video { width: 100%; display: block; }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .countdown-text {
+            font-size: 6rem;
+            font-weight: 900;
+            margin: 20px 0;
+            text-shadow: 0 0 30px var(--accent-pink);
+        }
+
+        input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 18px;
+            border-radius: 15px;
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .btn-action {
+            background: linear-gradient(45deg, var(--gold), #f9e29b);
+            color: #000;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.4s;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <div class="stage" id="main-stage">
+        <div id="auth-section">
+            <h1>Identity Required</h1>
+            <p style="margin-bottom:30px; opacity:0.6;">Enter the passcode for Belinda Amanya</p>
+            <input type="password" id="pass-input" placeholder="ACCESS CODE">
+            <button class="btn-action" onclick="validate()">Initiate Sequence</button>
+        </div>
+
+        <div id="celebration-section" class="hidden">
+            <h1 id="celebration-title">Awaiting Command</h1>
+            
+            <div id="slider-wrapper" class="slider-container hidden">
+                <div class="slide active"><img src="WhatsApp Image 2026-01-20 at 12.24.38 AM.jpeg"></div>
+                <div class="slide"><img src="WhatsApp Image 2026-01-10 at 4.39.00 PM.jpeg"></div>
+            </div>
+
+            <div id="main-timer" class="countdown-text"></div>
+            
+            <button class="btn-action" id="start-btn" onclick="startBirthdayEngine()">Launch Celebration</button>
+            
+            <div id="final-message-box" class="hidden">
+                <p class="wish-text">
+                    May this special day bring you endless joy, love, and laughter. You are an incredible person who lights up every room you enter.
+                </p>
+                <div class="video-wrapper">
+                    <video id="bday-video" controls>
+                        <source src="WhatsApp Video 2026-01-10 at 4.46.20 PM.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <p class="wish-text" style="font-size: 1.1rem; margin-top: 20px;">
+                    Here's to another year of amazing adventures, beautiful memories, and dreams coming true. May all your wishes come true today and always!
+                </p>
+            </div>
+
+            <div id="engine-status" style="margin-top:20px; font-size:0.7rem; color:var(--gold); letter-spacing:2px;">SYSTEMS READY</div>
+        </div>
+    </div>
+
+    <audio id="audio-track" src="Ada_Ehi_feat._Buchi_-_Congratulations_(mp3.pm).mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('audio-track');
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let particles = [];
+
+        // Carousel Logic
+        let currentSlide = 0;
+        function runSlider() {
+            const slides = document.querySelectorAll('.slide');
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 3000);
+        }
+
+        function validate() {
+            const pw = document.getElementById('pass-input').value;
+            if (pw.toLowerCase() === 'amanya') {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('celebration-section').classList.remove('hidden');
+            }
+        }
+
+        async function startBirthdayEngine() {
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+            
+            const btn = document.getElementById('start-btn');
+            const timer = document.getElementById('main-timer');
+            const title = document.getElementById('celebration-title');
+            const slider = document.getElementById('slider-wrapper');
+
+            btn.classList.add('hidden');
+            timer.innerText = "";
+            title.innerText = "Synchronizing";
+
+            let count = 5;
+            const countdownInterval = setInterval(() => {
+                if (count > 0) {
+                    timer.innerText = count;
+                } else if (count === 0) {
+                    timer.innerText = "";
+                    slider.classList.remove('hidden');
+                    runSlider();
+                    title.innerText = "HAPPY BIRTHDAY BELINDA!";
+                    clearInterval(countdownInterval);
+                    triggerCelebration();
+                }
+                count--;
+            }, 1000);
+        }
+
+        function triggerCelebration() {
+            audio.play();
+            startFireworks();
+            audio.onended = () => {
+                showFinalTribute();
+            };
+        }
+
+        function showFinalTribute() {
+            document.getElementById('main-timer').classList.add('hidden');
+            document.getElementById('final-message-box').classList.remove('hidden');
+            document.getElementById('engine-status').innerText = "TRIBUTE ACTIVE";
+            // Scroll to video smoothly if container is long
+            document.getElementById('final-message-box').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Particle Engine ---
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.velocity = { x: (Math.random() - 0.5) * 12, y: (Math.random() - 0.5) * 12 };
+                this.alpha = 1;
+                this.friction = 0.96;
+                this.gravity = 0.15;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * (canvas.height / 2);
+            const color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+            for (let i = 0; i < 60; i++) particles.push(new Particle(x, y, color));
+        }
+
+        function startFireworks() {
+            function animate() {
+                ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (Math.random() < 0.05) createFirework();
+                particles.forEach((p, i) => {
+                    if (p.alpha > 0) { p.update(); p.draw(); }
+                    else { particles.splice(i, 1); }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    </script>
+</body>
+</html>
